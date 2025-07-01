@@ -17,7 +17,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Create logs directory to prevent logback error
-RUN mkdir -p logs
+RUN mkdir -p /app/logs
 
 # Copy jar from build stage
 COPY --from=build /app/target/*.jar app.jar
