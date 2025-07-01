@@ -12,8 +12,8 @@ services:
       MYSQL_PASSWORD: Satheesh
     ports:
       - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+   volumes:
+  - ./logs:/app/logs
 
   product-service:
     build:
