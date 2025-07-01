@@ -1,31 +1,22 @@
-# ---------- Build Stage ----------
+# Stage 1: Build
 FROM maven:3.8.6-openjdk-17 AS build
-
 WORKDIR /app
-
-# Copy pom.xml and resolve dependencies early (layer optimization)
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Now copy source code
 COPY src ./src
+RUN mvn clean package
 
-# Build the application
-RUN mvn clean package -DskipTests
-
-# ---------- Runtime Stage ----------
+# Stage 2: Run
 FROM eclipse-temurin:17-jdk-alpine
-
 WORKDIR /app
 
-# Create logs directory for Logback
-RUN mkdir -p logs
+# Create log directory to avoid permission issues
+RUN mkdir -p /app/logs
 
-# Copy built JAR from build stage
+# Copy JAR from build
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose port
-EXPOSE 8080
+# Ensure the JAR has permissions to write logs
+RUN chmod -R 777 /app
 
-# Run the application
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
