@@ -1,29 +1,30 @@
-# Use Maven image for building
+# ---------- Build Stage ----------
 FROM maven:3.8.6-openjdk-17 AS build
 
-# Set work directory
 WORKDIR /app
 
-# Copy Maven project files
+# Copy pom.xml and resolve dependencies early (layer optimization)
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Now copy source code
 COPY src ./src
 
-# Package the application
+# Build the application
 RUN mvn clean package -DskipTests
 
-# Use lightweight image for running the app
+# ---------- Runtime Stage ----------
 FROM eclipse-temurin:17-jdk-alpine
 
-# Set working directory in runtime container
 WORKDIR /app
 
-# Create logs directory to prevent Logback error
+# Create logs directory for Logback
 RUN mkdir -p logs
 
-# Copy the JAR from the build image
+# Copy built JAR from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose port (adjust if needed)
+# Expose port
 EXPOSE 8080
 
 # Run the application
