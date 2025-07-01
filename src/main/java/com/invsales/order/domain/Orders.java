@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -16,133 +16,113 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Table(name = "orders")
 public class Orders implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1235524755717619937L;
+    private static final long serialVersionUID = 1235524755717619937L;
 
-	@Id
-	private int orderId;
+    @Id
+    private int orderId;
 
-	private String customerId;
-	private Date orderDate;
-	private int totalProducts;
-	private Double totalPrice;
+    private String customerId;
+    private Date orderDate;
+    private int totalProducts;
+    private Double totalPrice;
 
-	@JsonManagedReference("orders-orderdetail")
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderDetail> orderDetailList;
+    @JsonManagedReference("orders-orderdetail")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetailList;
 
-	public Orders() {
-	}
+    public Orders() {}
 
-	public Orders(int orderId, String customerId, Date orderDate, int totalProducts, Double totalPrice,
-			List<OrderDetail> orderDetailList) {
-		super();
-		this.orderId = orderId;
-		this.customerId = customerId;
-		this.orderDate = orderDate;
-		this.totalProducts = totalProducts;
-		this.totalPrice = totalPrice;
-		this.orderDetailList = orderDetailList;
-	}
+    public Orders(int orderId, String customerId, Date orderDate, int totalProducts, Double totalPrice,
+                  List<OrderDetail> orderDetailList) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.orderDate = orderDate;
+        this.totalProducts = totalProducts;
+        this.totalPrice = totalPrice;
+        this.orderDetailList = orderDetailList;
+    }
 
-	public int getOrderId() {
-		return orderId;
-	}
+    // Getters and Setters
 
-	public void setOrderId(int orderId) {
-		this.orderId = orderId;
-	}
+    public int getOrderId() {
+        return orderId;
+    }
 
-	public String getCustomerId() {
-		return customerId;
-	}
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
-	}
+    public String getCustomerId() {
+        return customerId;
+    }
 
-	public Date getOrderDate() {
-		return orderDate;
-	}
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 
-	public void setOrderDate(Date orderDate) {
-		this.orderDate = orderDate;
-	}
+    public Date getOrderDate() {
+        return orderDate;
+    }
 
-	public int getTotalProducts() {
-		return totalProducts;
-	}
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
 
-	public void setTotalProducts(int totalProducts) {
-		this.totalProducts = totalProducts;
-	}
+    public int getTotalProducts() {
+        return totalProducts;
+    }
 
-	public Double getTotalPrice() {
-		return totalPrice;
-	}
+    public void setTotalProducts(int totalProducts) {
+        this.totalProducts = totalProducts;
+    }
 
-	public void setTotalPrice(Double totalPrice) {
-		this.totalPrice = totalPrice;
-	}
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
 
-	public List<OrderDetail> getOrderDetailList() {
-		return orderDetailList;
-	}
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
-	public void setOrderDetailList(List<OrderDetail> orderDetailList) {
-		this.orderDetailList = orderDetailList;
-	}
+    public List<OrderDetail> getOrderDetailList() {
+        return orderDetailList;
+    }
 
-	@Override
-	public String toString() {
-		return "Orders [orderId=" + orderId + ", customerId=" + customerId + ", orderDate=" + orderDate
-				+ ", totalProducts=" + totalProducts + ", totalPrice=" + totalPrice + ", orderDetailList="
-				+ orderDetailList + "]";
-	}
+    public void setOrderDetailList(List<OrderDetail> orderDetailList) {
+        this.orderDetailList = orderDetailList;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-		result = prime * result + ((orderDate == null) ? 0 : orderDate.hashCode());
-		result = prime * result + orderId;
-		result = prime * result + ((totalPrice == null) ? 0 : totalPrice.hashCode());
-		result = prime * result + totalProducts;
-		return result;
-	}
+    @Override
+    public String toString() {
+        return "Orders{" +
+                "orderId=" + orderId +
+                ", customerId='" + customerId + '\'' +
+                ", orderDate=" + orderDate +
+                ", totalProducts=" + totalProducts +
+                ", totalPrice=" + totalPrice +
+                ", orderDetailList=" + orderDetailList +
+                '}';
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Orders other = (Orders) obj;
-		if (customerId == null) {
-			if (other.customerId != null)
-				return false;
-		} else if (!customerId.equals(other.customerId))
-			return false;
-		if (orderDate == null) {
-			if (other.orderDate != null)
-				return false;
-		} else if (!orderDate.equals(other.orderDate))
-			return false;
-		if (orderId != other.orderId)
-			return false;
-		if (totalPrice == null) {
-			if (other.totalPrice != null)
-				return false;
-		} else if (!totalPrice.equals(other.totalPrice))
-			return false;
-		if (totalProducts != other.totalProducts)
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Orders)) return false;
+        Orders orders = (Orders) o;
+        return orderId == orders.orderId &&
+                totalProducts == orders.totalProducts &&
+                customerId.equals(orders.customerId) &&
+                orderDate.equals(orders.orderDate) &&
+                totalPrice.equals(orders.totalPrice);
+    }
 
+    @Override
+    public int hashCode() {
+        int result = orderId;
+        result = 31 * result + customerId.hashCode();
+        result = 31 * result + orderDate.hashCode();
+        result = 31 * result + totalProducts;
+        result = 31 * result + totalPrice.hashCode();
+        return result;
+    }
 }
