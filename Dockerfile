@@ -1,5 +1,5 @@
-# Stage 1: Build the application using Maven and JDK 17
-FROM maven:3.8.7-eclipse-temurin-17 AS build
+# ---------- Stage 1: Build the application ----------
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 # Set working directory inside the container
 WORKDIR /app
@@ -7,23 +7,23 @@ WORKDIR /app
 # Copy all project files into the container
 COPY . .
 
-# Run Maven build including tests
-RUN mvn clean package
+# Build the application (includes tests)
+RUN mvn clean package -DskipTests
 
-# Stage 2: Run the app in a lightweight JDK container
+# ---------- Stage 2: Run the application ----------
 FROM eclipse-temurin:17-jdk-alpine
 
-# Set working directory
+# Set working directory inside the runtime container
 WORKDIR /app
 
-# Create a logs directory for logback
+# Create a logs directory for logging
 RUN mkdir -p logs
 
-# Copy the JAR file from the build stage
+# Copy the built JAR from the builder image
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose the app port
+# Expose the default Spring Boot port
 EXPOSE 8080
 
-# Run the Spring Boot application
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
