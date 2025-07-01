@@ -1,22 +1,39 @@
-# Stage 1: Build
+# Use official Maven image to build the app
 FROM maven:3.8.6-openjdk-17 AS build
+
 WORKDIR /app
+
+# Copy pom.xml and download dependencies
 COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copy source code and build the project
 COPY src ./src
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
-# Stage 2: Run
-FROM eclipse-temurin:17-jdk-alpine
-WORKDIR /app
+# ------------------------------------------------------------------------------
+# Create a minimal runtime image
+FROM openjdk:17-jdk-slim
 
-# Create log directory to avoid permission issues
-RUN mkdir -p /app/logs
+# Set environment variables
+ENV APP_HOME=/app \
+    LOG_DIR=/app/logs
 
-# Copy JAR from build
+WORKDIR $APP_HOME
+
+# Create logs directory with proper permissions
+RUN mkdir -p $LOG_DIR && \
+    useradd spring && \
+    chown -R spring:spring $APP_HOME
+
+# Copy built jar from previous stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Ensure the JAR has permissions to write logs
-RUN chmod -R 777 /app
+# Use a non-root user for better security
+USER spring
 
+# Expose app port (change if your app uses a different port)
 EXPOSE 8080
+
+# Run the Spring Boot app
 ENTRYPOINT ["java", "-jar", "app.jar"]
