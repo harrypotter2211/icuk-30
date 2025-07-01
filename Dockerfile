@@ -16,8 +16,8 @@ FROM eclipse-temurin:17-jdk-alpine
 # Set working directory inside the runtime container
 WORKDIR /app
 
-# Create a logs directory for logging
-RUN mkdir -p logs
+# Create logs directory to prevent permission issues
+RUN mkdir -p /app/logs
 
 # Copy the built JAR from the builder image
 COPY --from=build /app/target/*.jar app.jar
