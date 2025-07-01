@@ -1,38 +1,16 @@
-# Use official Maven image to build the app
-FROM maven:3.8.6-openjdk-17 AS build
-
+# Stage 1: Build
+FROM maven:3.8.6-openjdk-17 AS builder
 WORKDIR /app
-
-# Copy pom.xml and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline
-
-# Copy source code and build the project
-COPY src ./src
+COPY . .
 RUN mvn clean package -DskipTests
 
-# ------------------------------------------------------------------------------
-# Create a minimal runtime image
+# Stage 2: Run
 FROM openjdk:17-jdk-slim
-
-# Set environment variables
-ENV APP_HOME=/app \
-    LOG_DIR=/app/logs
-
-WORKDIR $APP_HOME
-
-# Create logs directory with proper permissions
-RUN mkdir -p /app/logs
 WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 
-# Copy built jar from previous stage
-COPY --from=build /app/target/*.jar app.jar
+# Logging to console
+ENV JAVA_OPTS="-Dlogging.file.name=/dev/stdout"
 
-# Use a non-root user for better security
-USER spring
-
-# Expose app port (change if your app uses a different port)
 EXPOSE 8080
-
-# Run the Spring Boot app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
