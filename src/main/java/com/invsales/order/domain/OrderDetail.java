@@ -2,14 +2,12 @@ package com.invsales.order.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -17,101 +15,99 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Table(name = "order_detail")
 public class OrderDetail implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4468614038348145955L;
+    private static final long serialVersionUID = -7920182028129856917L;
 
-	@Id
-	//@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int orderDetailId;
+    @Id
+    private int orderDetailId;
 
-	private String productId;
-	private int quantity;
+    private String productName;
+    private int quantity;
+    private Double price;
 
-	@JsonBackReference("orders-orderdetail")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id")
-	private Orders order;
+    @JsonBackReference("orders-orderdetail")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Orders order;
 
-	public OrderDetail() {
-	}
+    public OrderDetail() {}
 
-	public OrderDetail(int orderDetailId, String productId, int quantity, Orders order) {
-		super();
-		this.orderDetailId = orderDetailId;
-		this.productId = productId;
-		this.quantity = quantity;
-		this.order = order;
-	}
+    public OrderDetail(int orderDetailId, String productName, int quantity, Double price, Orders order) {
+        this.orderDetailId = orderDetailId;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.price = price;
+        this.order = order;
+    }
 
-	public int getOrderDetailId() {
-		return orderDetailId;
-	}
+    // Getters and Setters
 
-	public void setOrderDetailId(int orderDetailId) {
-		this.orderDetailId = orderDetailId;
-	}
+    public int getOrderDetailId() {
+        return orderDetailId;
+    }
 
-	public String getProductId() {
-		return productId;
-	}
+    public void setOrderDetailId(int orderDetailId) {
+        this.orderDetailId = orderDetailId;
+    }
 
-	public void setProductId(String productId) {
-		this.productId = productId;
-	}
+    public String getProductName() {
+        return productName;
+    }
 
-	public int getQuantity() {
-		return quantity;
-	}
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+    public int getQuantity() {
+        return quantity;
+    }
 
-	public Orders getOrder() {
-		return order;
-	}
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setOrder(Orders order) {
-		this.order = order;
-	}
+    public Double getPrice() {
+        return price;
+    }
 
-	@Override
-	public String toString() {
-		return "OrderDetail [orderDetailId=" + orderDetailId + ", productId=" + productId + ", quantity=" + quantity
-				+ ", order=" + order + "]";
-	}
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + orderDetailId;
-		result = prime * result + ((productId == null) ? 0 : productId.hashCode());
-		result = prime * result + quantity;
-		return result;
-	}
+    public Orders getOrder() {
+        return order;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OrderDetail other = (OrderDetail) obj;
-		if (orderDetailId != other.orderDetailId)
-			return false;
-		if (productId == null) {
-			if (other.productId != null)
-				return false;
-		} else if (!productId.equals(other.productId))
-			return false;
-		if (quantity != other.quantity)
-			return false;
-		return true;
-	}
+    public void setOrder(Orders order) {
+        this.order = order;
+    }
 
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "orderDetailId=" + orderDetailId +
+                ", productName='" + productName + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int result = orderDetailId;
+        result = 31 * result + productName.hashCode();
+        result = 31 * result + quantity;
+        result = 31 * result + price.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderDetail)) return false;
+        OrderDetail that = (OrderDetail) o;
+        return orderDetailId == that.orderDetailId &&
+                quantity == that.quantity &&
+                productName.equals(that.productName) &&
+                price.equals(that.price);
+    }
 }
