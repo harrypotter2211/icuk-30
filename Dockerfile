@@ -1,31 +1,41 @@
-# Use official Maven image with Java 17
+# -----------------------------
+# Stage 1: Build with Maven + JDK 17
+# -----------------------------
 FROM maven:3.8.6-openjdk-17 AS build
 
-# Set working directory
+# Set working directory inside container
 WORKDIR /app
 
-# Copy the project files into the container
-COPY . .
+# Copy the entire project
+COPY pom.xml .
+COPY src ./src
 
-# Run Maven build with tests
+# Download dependencies (improves cache usage)
+RUN mvn dependency:go-offline
+
+# Build the project with tests
 RUN mvn clean package
 
 # -----------------------------
-# Create a lightweight runtime image
+# Stage 2: Lightweight JDK runtime
 # -----------------------------
 FROM openjdk:17-jdk-slim
 
-# Set working directory
+# Create non-root user (optional but recommended)
+RUN useradd -ms /bin/bash appuser
+
+# Set working directory and permissions
 WORKDIR /app
+RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 
-# Create logs directory to prevent permission issues
-RUN mkdir logs
-
-# Copy the built jar from the builder image
+# Copy built artifact from the build image
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose application port (adjust if needed)
+# Change to non-root user
+USER appuser
+
+# Expose application port (adjust as needed)
 EXPOSE 8080
 
-# Run the application
+# Run the Spring Boot app
 ENTRYPOINT ["java", "-jar", "app.jar"]
