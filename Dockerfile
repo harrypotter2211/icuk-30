@@ -22,9 +22,8 @@ ENV APP_HOME=/app \
 WORKDIR $APP_HOME
 
 # Create logs directory with proper permissions
-RUN mkdir -p $LOG_DIR && \
-    useradd spring && \
-    chown -R spring:spring $APP_HOME
+RUN mkdir -p /app/logs
+WORKDIR /app
 
 # Copy built jar from previous stage
 COPY --from=build /app/target/*.jar app.jar
