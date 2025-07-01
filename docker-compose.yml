@@ -2,34 +2,39 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8
-    container_name: mysql-db
+    image: mysql:8.0
+    container_name: mysql-container
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: inventorysales
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Satheesh
+      MYSQL_DATABASE: invsales
+      MYSQL_USER: invuser
+      MYSQL_PASSWORD: invpass
     ports:
       - "3306:3306"
-   volumes:
-  - ./logs:/app/logs
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - inv-network
 
-  product-service:
-    build:
-      context: .
-    container_name: invsales-product-service
-    restart: always
+  app:
+    image: harrypotter22/newrepo:2.3
+    container_name: product-service
     depends_on:
       - mysql
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/inventorysales
-      SPRING_DATASOURCE_USERNAME: admin
-      SPRING_DATASOURCE_PASSWORD: Satheesh
     ports:
-      - "8080:8080"
-    volumes:
-      - ./logs:/app/logs
+      - "8085:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/invsales
+      SPRING_DATASOURCE_USERNAME: invuser
+      SPRING_DATASOURCE_PASSWORD: invpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - inv-network
 
 volumes:
-  mysql_data:
+  mysql-data:
+
+networks:
+  inv-network:
+    driver: bridge
